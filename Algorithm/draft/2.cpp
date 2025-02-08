@@ -1,41 +1,76 @@
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+#include <iostream>
+#include <algorithm>
+
 using namespace std;
-const int N = 1e5 + 10;
-int n, q, b[N];
-int a[N];
+typedef pair<int, int> PII;
+const int N = 3e5 + 10; // 坐标 x数量是1e5， l, r也是1e5
+                        // 三者加起来就是3e5
+int n, m;
+int s[N], a[N];
+vector<PII> add, query; // 存插入和查询
+vector<int> alls;
+
+int find(int x)
+{
+    int l = 0, r = alls.size() - 1;
+    while (l < r)
+    {
+        int mid = l + r >> 1;
+        if (alls[mid] >= x)
+            r = mid;
+        else
+            l = mid + 1;
+    }
+    return r + 1; // 这里+1是为了s[i - 1]不越界
+}
+
 int main()
 {
-    int t;
-    cin >> t;
-    while (t--)
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++)
     {
-        int n, x, index1, index2, y, z;
-        bool flag = 0;
-        cin >> n;
-        for (int i = 1; i <= n; i++)
-            cin >> a[i];
-        sort(a + 1, a + 1 + n);
-        for (int i = n - 1; i >= 1; i--)
-        {
-            if (a[i] == a[i + 1])
-            {
-                for (int j = 1, last = -1e9; j <= n; j++)
-                {
-                    if (j == i || j == i + 1)
-                        continue;
-                    if (a[j] - last < 2 * a[i])
-                    {
-                        cout << a[i] << " " << a[i] << " " << a[j] << " " << last << endl;
-                        flag = 1;
-                        break;
-                    }
-                    last = a[j];
-                }
-                break;
-            }
-        }
-        if (!flag)
-            cout << -1 << endl;
+        int x, c;
+        cin >> x >> c;
+        alls.push_back(x);
+        add.push_back({x, c});
     }
+
+    for (int i = 1; i <= m; i++)
+    {
+        int l, r;
+        cin >> l >> r;
+        alls.push_back(l);
+        alls.push_back(r);
+        query.push_back({l, r});
+    }
+
+    // 离散化
+    // 1.去重
+    sort(alls.begin(), alls.end()); // 排序为了unique函数去重
+    alls.erase(unique(alls.begin(), alls.end()), alls.end());
+
+    // 2.离散缩小
+    // 处理插入
+    for (auto item : add)
+    {
+        int x = find(item.first);
+        a[x] += item.second;
+    }
+
+    // 预处理前缀和
+    for (int i = 1; i <= alls.size(); i++)
+    {
+        s[i] = s[i - 1] + a[i];
+    }
+
+    // 处理询问
+    for (auto item : query)
+    {
+        int l = find(item.first);
+        int r = find(item.second);
+        cout << s[r] - s[l - 1] << endl;
+    }
+
     return 0;
 }

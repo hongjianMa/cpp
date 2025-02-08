@@ -1,26 +1,47 @@
-#include <bits/stdc++.h>
+#include <iostream>
 using namespace std;
+
+const int N = 210, M = 2e+10, INF = 1e9;
+
+int n, m, k, x, y, z;
+int d[N][N];
+
+void floyd()
+{
+    for (int k = 1; k <= n; k++)
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= n; j++)
+                d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
+}
+
 int main()
 {
-    int64_t N, M;
-    cin >> N >> M;
-    int64_t max_g_candidate = M / N;
-    int64_t ans = 0;
-    for (int64_t i = 1; i * i <= M; ++i)
+    cin >> n >> m >> k;
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= n; j++)
+            if (i == j)
+                d[i][j] = 0;
+            else
+                d[i][j] = INF;
+    while (m--)
     {
-        if (M % i == 0)
-        {
-            if (i <= max_g_candidate)
-            {
-                ans = max(ans, i);
-            }
-            int64_t j = M / i;
-            if (j <= max_g_candidate)
-            {
-                ans = max(ans, j);
-            }
-        }
+        cin >> x >> y >> z;
+        d[x][y] = min(d[x][y], z);
+        // 注意保存最小的边
     }
-    cout << ans << endl;
+    floyd();
+    while (k--)
+    {
+        cin >> x >> y;
+        if (d[x][y] > INF / 2)
+            puts("impossible");
+        // 由于有负权边存在所以约大过INF/2也很合理
+        else
+            cout << d[x][y] << endl;
+    }
     return 0;
 }
+
+作者：郡呈
+链接：https : // www.acwing.com/solution/content/6976/
+              来源：AcWing 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

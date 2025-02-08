@@ -139,5 +139,10 @@
   "editor.fontSize": 20,
   "aide.convertLanguagePairs": {
     "cpp": "python"
-  }
+  },
+  "marscode.chatLanguage": "cn",
+  "marscode.codeCompletionPro": {
+    "enableCodeCompletionPro": false
+  },
+  "marscode.enableInlineCommand": true
 }
